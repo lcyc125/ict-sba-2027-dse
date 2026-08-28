@@ -1,11 +1,16 @@
-# ICT SBA 2027 DSE
+# ICT SBA 2027 DSE — Snake Game
 
-香港中學文憑試（DSE）資訊及通訊科技（ICT）校本評核（SBA）專案。
+貪食蛇遊戲（Python + Pygame）。
 
-## 專案說明
+## 執行方式
 
-（待補充）
+```bash
+pip install -r requirements.txt
+python main.py
+```
 
-## 技術
+## 功能
 
-（待補充）
+- 輸入玩家名稱
+- 貪食蛇移動與成長
+- Top 10 排行榜（儲存於 `leaderboard.json`）
