@@ -2,6 +2,7 @@ import pygame
 import random
 import json
 import os
+import sys
 
 
 pygame.init()
@@ -19,6 +20,23 @@ font = pygame.font.Font(None, 36)
 small_font = pygame.font.Font(None, 28)
 bg_font = pygame.font.Font(None, 250)
 titleFont = pygame.font.Font(None, 32)
+
+
+# 載入圖片同音效
+# （打包成 exe 時，資源檔會解壓到臨時資料夾，用 sys._MEIPASS 搵返）
+if getattr(sys, 'frozen', False):
+    BASE = sys._MEIPASS
+else:
+    BASE = os.path.dirname(os.path.abspath(__file__))
+
+apple_img = pygame.image.load(os.path.join(BASE, "apple.png"))
+apple_img = pygame.transform.scale(apple_img, (20, 20))
+worm_img = pygame.image.load(os.path.join(BASE, "worm.png"))
+qr_img = pygame.image.load(os.path.join(BASE, "qr_code.png"))
+qr_img = pygame.transform.scale(qr_img, (100, 100))
+point_sound = pygame.mixer.Sound(os.path.join(BASE, "point.wav"))
+background = pygame.image.load(os.path.join(BASE, "background.png"))
+background = pygame.transform.scale(background, (screen_width, screen_height))
 
 
 # 冒泡排序
@@ -61,6 +79,7 @@ def load_leaderboard():
 
 def start_panel(game_state, player_name, running):
    screen.fill((0, 0, 0))
+   screen.blit(qr_img, (10, 10))   # 左上角顯示意見問卷 QR code
    title = titleFont.render("Snake Game", True, (0, 255, 0))
    screen.blit(title, (screen_width // 2 - title.get_width() // 2, 100))
 
@@ -160,7 +179,7 @@ while running:
        continue
 
 
-   screen.fill((0, 0, 0))
+   screen.blit(background, (0, 0))
 
 
    # 巢式
@@ -208,19 +227,20 @@ while running:
 
 
        # 边界
-       if snake_head[0] > 720 or snake_head[0] < 0 or snake_head[1] > 480 or snake_head[1] < 0:
+       if snake_head[0] > 710 or snake_head[0] < 0 or snake_head[1] > 470 or snake_head[1] < 0:
            game_state = "end"
 
 
            # 蛇身碰撞
-       for i in range(1, len(snake_body) - 1):
+       for i in range(1, len(snake_body)):
            if snake_head == snake_body[i]:
                game_state = "end"
 
 
        # 吃到食物
-       if snake_head[0] == apple_x and snake_head[1] == apple_y:
+       if abs(snake_head[0] - apple_x) <= 10 and abs(snake_head[1] - apple_y) <= 10:   # 距離一格內都算食到
            score += 10
+           point_sound.play()
            apple_x, apple_y = random.randrange(0, 710, 10), random.randrange(0, 470, 10)
        else:
            snake_body.pop()
@@ -238,7 +258,7 @@ while running:
 
 
    for block in snake_body:
-       pygame.draw.rect(screen, (255, 0, 0), (block[0], block[1], 10, 10))
+       screen.blit(worm_img, (block[0], block[1]))   # 蛇身（蚯蚓貼圖，頭身一樣）
 
 
    if game_state == "end":

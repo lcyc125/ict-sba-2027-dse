@@ -11,3 +11,16 @@ env/
 # OS
 .DS_Store
 Thumbs.db
+
+# 打包輸出
+build/
+dist/
+
+# 遊戲產生的排行榜數據
+leaderboard.json
+
+# 開發輔助工具與截圖
+_*.py
+screenshot_*.png
+flowchart*.png
+.vscode/
