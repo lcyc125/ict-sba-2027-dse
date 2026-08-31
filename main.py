@@ -22,12 +22,8 @@ bg_font = pygame.font.Font(None, 250)
 titleFont = pygame.font.Font(None, 32)
 
 
-# 溫習：四種字型：普通、小字、大分數、標題
-
-
 # 載入圖片同音效
 # （打包成 exe 時，資源檔會解壓到臨時資料夾，用 sys._MEIPASS 搵返）
-# 溫習：apple 20×20、QR 100×100、背景 720×480
 if getattr(sys, 'frozen', False):
     BASE = sys._MEIPASS
 else:
@@ -47,7 +43,6 @@ background = pygame.transform.scale(background, (screen_width, screen_height))
 
 
 def save_score(name, score):
-   # 溫習：檔案唔存在就用空 list，唔會 crash
    file_path = "leaderboard.json"
    if os.path.exists(file_path):
        with open(file_path, "r") as f:
@@ -59,7 +54,6 @@ def save_score(name, score):
    data.append({"name": name, "score": score})
 
 
-   # 溫習：兩層 for 係冒泡排序，相鄰比較分數，低分向後移
    n = len(data)
    for i in range(n):
        for j in range(0, n - i - 1):
@@ -67,7 +61,6 @@ def save_score(name, score):
                data[j], data[j + 1] = data[j + 1], data[j]
 
 
-   # 溫習：data[:10] 只留頭 10 名
    with open(file_path, "w") as f:
        json.dump(data[:10], f)
 
@@ -75,7 +68,6 @@ def save_score(name, score):
 
 
 def load_leaderboard():
-   # 溫習：讀返舊紀錄，冇檔案回傳 []
    if os.path.exists("leaderboard.json"):
        with open("leaderboard.json", "r") as f:
            return json.load(f)
@@ -116,10 +108,8 @@ def start_panel(game_state, player_name, running):
                running = False
            elif event.key == pygame.K_BACKSPACE:
                player_name = player_name[:-1]
-           # 溫習：名稱唔可以空先可以開始
            elif (event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER) and len(player_name) > 0:
                game_state = 'play'
-           # 溫習：len < 8 先加入字元 → 最長 8 個字元
            elif len(player_name) < 8:
                player_name += event.unicode
        elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -134,7 +124,6 @@ def start_panel(game_state, player_name, running):
 
 
 def reset_game():
-   # 溫習：每局開頭：蛇 3 格、向右行、分數歸零
    global snake_head, snake_body, apple_x, apple_y, direction, change_to, score, scored_saved
    snake_head = [100, 100]
    snake_body = [[100, 100], [90, 100], [80, 100]]
@@ -153,8 +142,8 @@ player_name = ""
 running = True
 
 
+# 主迴圈
 while running:
-   # 溫習：game_state 係狀態機：start / play / end / leaderboard
    if game_state == "start":
        game_state, player_name, running = start_panel(game_state, player_name, running)
        if game_state == "play":
@@ -169,7 +158,6 @@ while running:
        screen.blit(lb_title, (screen_width // 2 - lb_title.get_width() // 2, 50))
 
 
-       # 溫習：排行榜由 json 讀返，逐行顯示，ESC 返回
        records = load_leaderboard()
        for i, rec in enumerate(records):
            rec_txt = small_font.render(f"{i + 1}. {rec['name']} - {rec['score']}", True, (255, 255, 255))
@@ -220,14 +208,14 @@ while running:
 
 
    if game_state == "play":
-       # 溫習：防 180 度掉頭 — 同現時方向相反就唔採用
+       # 防 180 度反轉
        if change_to == 'UP' and direction != 'DOWN': direction = 'UP'
        if change_to == 'DOWN' and direction != 'UP': direction = 'DOWN'
        if change_to == 'LEFT' and direction != 'RIGHT': direction = 'LEFT'
        if change_to == 'RIGHT' and direction != 'LEFT': direction = 'RIGHT'
 
 
-       # 溫習：每次郁一格（10 像素），先改蛇頭座標
+       # 移動蛇頭
        if direction == 'UP':
            snake_head[1] -= 10
        elif direction == 'DOWN':
@@ -238,18 +226,16 @@ while running:
            snake_head[0] += 10
 
 
+       # 頭加尾刪
        snake_body.insert(0, list(snake_head))
-       # 溫習：食到就唔 pop → 變長；食唔到 pop → 長度不變
 
 
        # 边界
-       # 溫習：視窗 720×480，一格 10 像素，右界 710、下界 470
        if snake_head[0] > 710 or snake_head[0] < 0 or snake_head[1] > 470 or snake_head[1] < 0:
            game_state = "end"
 
 
            # 蛇身碰撞
-       # 溫習：由第 2 格（i=1）開始同蛇頭比較，撞到就完
        for i in range(1, len(snake_body)):
            if snake_head == snake_body[i]:
                game_state = "end"
@@ -265,12 +251,11 @@ while running:
 
 
    # 繪圖
-   # 溫習：{score:02} 最少兩位數，例如 5 → 05
+   # 背景大分數
    bg_text = bg_font.render(f"{score:02}", True, (50, 50, 50))
    screen.blit(bg_text, ((screen_width - bg_text.get_width()) // 2, 120))
 
 
-   # 溫習：有圖就用圖，冇圖畫綠色方塊後備
    if apple_img:
        screen.blit(apple_img, (apple_x - 5, apple_y - 5))
    else:
@@ -282,7 +267,7 @@ while running:
 
 
    if game_state == "end":
-       # 溫習：scored_saved 防止分數重複入榜
+       # 防止重複儲存
        if not scored_saved:
            save_score(player_name, score)
            scored_saved = True
@@ -303,7 +288,7 @@ while running:
 
 
    pygame.display.flip()
-   fps.tick(30)   # 溫習：每秒 30 格，控制蛇嘅速度
+   fps.tick(30)
 
 
 pygame.quit()
