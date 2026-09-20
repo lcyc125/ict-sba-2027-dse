@@ -44,7 +44,7 @@ apple_img = pygame.transform.scale(apple_img, (20, 20))
 worm_img = pygame.image.load(os.path.join(BASE, "worm.png"))
 qr_img = pygame.image.load(os.path.join(BASE, "qr_code.png"))
 qr_img = pygame.transform.scale(qr_img, (100, 100))
-point_sound = pygame.mixer.Sound(os.path.join(BASE, "point.wav"))
+point_sound = pygame.mixer.Sound(os.path.join(BASE, "point.ogg"))
 background = pygame.image.load(os.path.join(BASE, "background.png"))
 background = pygame.transform.scale(background, (screen_width, screen_height))
 

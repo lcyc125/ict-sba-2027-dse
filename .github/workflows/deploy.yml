@@ -49,7 +49,7 @@ jobs:
         run: pip install pygbag pygame-ce
       - name: 複製資源檔去 web/ 資料夾
         run: |
-          cp apple.png worm.png point.wav background.png qr_code.png web/
+          cp apple.png worm.png point.ogg background.png qr_code.png web/
       - name: 用 pygbag 打包成網頁
         run: python -m pygbag --build web/
       - uses: actions/configure-pages@v5
