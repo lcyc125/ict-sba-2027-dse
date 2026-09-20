@@ -23,6 +23,7 @@ jobs:
       - name: 打包成 macOS .app
         run: |
           pyinstaller --noconfirm --windowed --name SnakeAdventure \
+            --runtime-hook macos_rthook.py \
             --add-data "apple.png:." \
             --add-data "worm.png:." \
             --add-data "point.wav:." \
