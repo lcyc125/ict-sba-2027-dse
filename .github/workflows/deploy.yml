@@ -11,36 +11,6 @@ permissions:
   id-token: write
 
 jobs:
-  macos:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - name: 安裝 pygame 同 PyInstaller
-        run: pip install pygame pyinstaller
-      - name: 打包成 macOS .app
-        run: |
-          pyinstaller --noconfirm --windowed --name SnakeAdventure \
-            --runtime-hook macos_rthook.py \
-            --add-data "apple.png:." \
-            --add-data "worm.png:." \
-            --add-data "point.wav:." \
-            --add-data "background.png:." \
-            --add-data "qr_code.png:." \
-            main.py
-      - name: 製作 DMG 安裝檔
-        run: |
-          mkdir -p dmg_root
-          cp -R dist/SnakeAdventure.app dmg_root/
-          ln -s /Applications dmg_root/Applications
-          hdiutil create -volname "SnakeAdventure" -srcfolder dmg_root -ov -format UDZO SnakeAdventure-macOS.dmg
-      - uses: actions/upload-artifact@v4
-        with:
-          name: SnakeAdventure-macOS
-          path: SnakeAdventure-macOS.dmg
-
   windows:
     runs-on: windows-latest
     steps:
