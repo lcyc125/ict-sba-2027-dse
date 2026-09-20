@@ -1,4 +1,4 @@
-name: build-macos-and-web
+name: build-and-deploy
 
 on:
   push:
@@ -40,6 +40,22 @@ jobs:
         with:
           name: SnakeAdventure-macOS
           path: SnakeAdventure-macOS.dmg
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 安裝 pygame 同 PyInstaller
+        run: pip install pygame pyinstaller
+      - name: 打包成 Windows exe
+        run: pyinstaller --noconfirm SnakeAdventure.spec
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SnakeAdventure-Windows
+          path: dist/SnakeAdventure.exe
 
   web:
     runs-on: ubuntu-latest
