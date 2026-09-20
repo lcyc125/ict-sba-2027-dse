@@ -1,0 +1,61 @@
+name: build-macos-and-web
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 安裝 pygame 同 PyInstaller
+        run: pip install pygame pyinstaller
+      - name: 打包成 macOS .app
+        run: |
+          pyinstaller --noconfirm --windowed --name SnakeAdventure \
+            --add-data "apple.png:." \
+            --add-data "worm.png:." \
+            --add-data "point.wav:." \
+            --add-data "background.png:." \
+            --add-data "qr_code.png:." \
+            main.py
+      - name: 壓縮成 zip
+        run: |
+          cd dist
+          zip -r ../SnakeAdventure-macOS.zip SnakeAdventure.app
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SnakeAdventure-macOS
+          path: SnakeAdventure-macOS.zip
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 安裝 pygbag
+        run: pip install pygbag pygame-ce
+      - name: 複製資源檔去 web/ 資料夾
+        run: |
+          cp apple.png worm.png point.wav background.png qr_code.png web/
+      - name: 用 pygbag 打包成網頁
+        run: python -m pygbag --build web/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/build/web
+      - name: 部署去 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

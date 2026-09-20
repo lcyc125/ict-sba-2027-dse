@@ -24,3 +24,7 @@ _*.py
 screenshot_*.png
 flowchart*.png
 .vscode/
+
+# 網頁版（CI 會自動複製資源檔 + 產生 build/，只提交 web/main.py）
+web/*
+!web/main.py
