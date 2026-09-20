@@ -51,7 +51,7 @@ jobs:
         run: |
           cp apple.png worm.png point.ogg background.png qr_code.png web/
       - name: 用 pygbag 打包成網頁
-        run: python -m pygbag --build web/
+        run: python -m pygbag --build --app_name SnakeAdventure web/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
